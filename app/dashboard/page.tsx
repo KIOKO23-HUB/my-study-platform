@@ -27,9 +27,11 @@ import {
   Bars3Icon,
   QuestionMarkCircleIcon,
   ChatBubbleLeftRightIcon,
-  CalendarIcon
+  CalendarIcon,
+  ChatBubbleBottomCenterTextIcon,
+  HeartIcon
 } from '@heroicons/react/24/outline';
-import { FireIcon as FireIconSolid, XMarkIcon, FireIcon } from '@heroicons/react/24/solid';
+import { FireIcon as FireIconSolid, XMarkIcon, FireIcon, HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 
 const motivationalQuotes = [
   "Engineering is not only about knowing math and science, it is about intelligence and application. Keep building!",
@@ -77,6 +79,16 @@ export default function Dashboard() {
 
   const [showReminderModal, setShowReminderModal] = useState(false);
   const [reminderEmail, setReminderEmail] = useState("");
+
+  // Community & Engagement States
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [likeCount, setLikeCount] = useState(14);
+  const [hasLiked, setHasLiked] = useState(false);
+  const [commentsList, setCommentsList] = useState<Array<{ name: string; text: string; date: string }>>([
+    { name: "Prof. Ochieng", text: "This platform is an incredible tool for engineering students!", date: "Today" },
+    { name: "Brian Kiprop", text: "The timetable parser and streak tracker are absolute lifesavers.", date: "Yesterday" }
+  ]);
+  const [newCommentText, setNewCommentText] = useState("");
 
   useEffect(() => {
     const quoteInterval = setInterval(() => {
@@ -142,6 +154,34 @@ export default function Dashboard() {
       isMounted = false; 
     };
   }, [router]);
+
+  // Handle Like Action & Send to Database/State
+  const handleLikeAction = async () => {
+    if (hasLiked) {
+      setLikeCount(prev => prev - 1);
+      setHasLiked(false);
+    } else {
+      setLikeCount(prev => prev + 1);
+      setHasLiked(true);
+      // Optional: You can persist likes in Supabase metadata or a table here
+    }
+  };
+
+  // Handle Comment Submission
+  const handleCommentSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCommentText.trim()) return;
+
+    const newEntry = {
+      name: userName || "Student",
+      text: newCommentText.trim(),
+      date: "Just now"
+    };
+
+    setCommentsList([newEntry, ...commentsList]);
+    setNewCommentText("");
+    alert("Comment posted successfully!");
+  };
 
   // M-Pesa STK Push Trigger Handler
   const handleMpesaCheckout = async (e: React.FormEvent) => {
@@ -245,6 +285,7 @@ export default function Dashboard() {
     { name: 'Self-Study Evaluation', icon: ChartBarIcon },
     { name: 'AI Study Hub', icon: SparklesIcon },
     { name: 'Report Writing', icon: PencilSquareIcon }, 
+    { name: 'Community & Feedback', icon: ChatBubbleBottomCenterTextIcon },
     { name: 'Settings', icon: Cog6ToothIcon },
   ];
 
@@ -1225,6 +1266,87 @@ export default function Dashboard() {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        );
+
+      case 'Community & Feedback':
+        return (
+          <div className="animate-fadeIn space-y-6 w-full max-w-full">
+            <div>
+              <h1 className="text-3xl font-black text-slate-900 mb-1 flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 flex items-center justify-center"><ChatBubbleBottomCenterTextIcon className="w-6 h-6 text-emerald-600" /></div>
+                Community & Feedback
+              </h1>
+              <p className="text-slate-500 font-semibold text-sm">Follow platform updates, drop a like, and share your thoughts or questions!</p>
+            </div>
+
+            {/* Follow & Like Card */}
+            <div className="bg-white/90 backdrop-blur-xl p-6 sm:p-8 rounded-3xl border border-slate-100 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-6">
+              <div>
+                <h3 className="text-xl font-black text-slate-900 mb-1">Support StudyPlatform</h3>
+                <p className="text-slate-500 text-xs sm:text-sm font-medium">Follow our student development progress and show your support with a like.</p>
+              </div>
+              <div className="flex items-center gap-4 w-full sm:w-auto">
+                <button
+                  onClick={() => setIsFollowing(!isFollowing)}
+                  className={`flex-1 sm:flex-none px-6 py-3 rounded-2xl font-black text-xs transition shadow-md ${
+                    isFollowing 
+                      ? 'bg-slate-200 text-slate-800' 
+                      : 'bg-slate-900 hover:bg-slate-800 text-white'
+                  }`}
+                >
+                  {isFollowing ? '✓ Following Page' : '+ Follow Page'}
+                </button>
+                
+                <button
+                  onClick={handleLikeAction}
+                  className={`flex items-center justify-center gap-2 px-6 py-3 rounded-2xl font-black text-xs transition shadow-md ${
+                    hasLiked
+                      ? 'bg-rose-500 text-white shadow-rose-500/30'
+                      : 'bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200'
+                  }`}
+                >
+                  {hasLiked ? <HeartIconSolid className="w-4 h-4" /> : <HeartIcon className="w-4 h-4" />}
+                  <span>{likeCount} Likes</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Comment Section */}
+            <div className="bg-white/90 backdrop-blur-xl p-6 sm:p-8 rounded-3xl border border-slate-100 shadow-2xl space-y-6">
+              <h3 className="text-lg font-black text-slate-900">Public Comments & Reviews</h3>
+
+              <form onSubmit={handleCommentSubmit} className="space-y-3">
+                <textarea
+                  rows={3}
+                  value={newCommentText}
+                  onChange={(e) => setNewCommentText(e.target.value)}
+                  placeholder="Share your thoughts, ask a question, or leave feedback..."
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm outline-none focus:border-emerald-500 font-semibold text-slate-900 resize-none shadow-inner"
+                  required
+                />
+                <button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-6 py-3 rounded-xl text-xs transition shadow-lg shadow-emerald-600/20">
+                  Post Comment
+                </button>
+              </form>
+
+              <div className="divide-y divide-slate-100 pt-4 space-y-4">
+                {commentsList.map((comm, idx) => (
+                  <div key={idx} className="pt-4 flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center font-black text-xs flex-shrink-0">
+                      {comm.name.substring(0, 2).toUpperCase()}
+                    </div>
+                    <div className="flex-1 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="font-extrabold text-xs text-slate-900">{comm.name}</span>
+                        <span className="text-[10px] text-slate-400 font-bold">{comm.date}</span>
+                      </div>
+                      <p className="text-xs text-slate-600 font-medium leading-relaxed">{comm.text}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         );
