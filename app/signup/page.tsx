@@ -17,6 +17,111 @@ const countryCodes = [
   { code: "+971", country: "UAE" }, { code: "+00", country: "Other" }
 ];
 
+// Comprehensive Course Database mapped by School Category (Major categories have 50+, others have 15+)
+const schoolCoursesMap: Record<string, string[]> = {
+  "Science": [
+    "BSc Biology", "BSc Chemistry", "BSc Physics", "BSc Mathematics", "BSc Statistics",
+    "BSc Actuarial Science", "BSc Biochemistry", "BSc Microbiology", "BSc Biotechnology",
+    "BSc Applied Biology", "BSc Analytical Chemistry", "BSc Industrial Chemistry", "BSc Environmental Science",
+    "BSc Meteorology", "BSc Geology", "BSc Geophysics", "BSc Astronomy", "BSc Zoology",
+    "BSc Botany", "BSc Genetics", "BSc Biomedical Science", "BSc Forensic Science", "BSc Marine Biology",
+    "BSc Oceanography", "BSc Conservation Biology", "BSc Earth Science", "BSc Physical Science",
+    "BSc Computational Biology", "BSc Nanotechnology", "BSc Material Science", "BSc Food Science & Technology",
+    "BSc Nutrition and Dietetics", "BSc Sports Science", "BSc Exercise Science", "BSc Pharmacology",
+    "BSc Toxicology", "BSc Immunology", "BSc Virology", "BSc Physiology", "BSc Anatomy",
+    "BSc Pathology", "BSc Epidemiology", "BSc Bioinformatics", "BSc Data Science in Science",
+    "BSc Laboratory Technology", "BSc Renewable Energy", "BSc Environmental Physics",
+    "BSc Mathematical Finance", "BSc Quantum Physics","BSc Nursing", "Other Science Course"
+  ],
+  "Engineering": [
+    "BSc Mechanical Engineering", "BSc Civil Engineering", "BSc Electrical & Electronics Engineering",
+    "BSc Mechatronic Engineering", "BSc Aerospace Engineering", "BSc Aeronautical Engineering",
+    "BSc Chemical Engineering", "BSc Agricultural Engineering", "BSc Biomedical Engineering",
+    "BSc Environmental Engineering", "BSc Petroleum Engineering", "BSc Mining Engineering",
+    "BSc Marine Engineering", "BSc Metallurgical Engineering", "BSc Industrial Engineering",
+    "BSc Systems Engineering", "BSc Structural Engineering", "BSc Geomatic Engineering",
+    "BSc Telecommunications Engineering", "BSc Computer Engineering", "BSc Software Engineering",
+    "BSc Automotive Engineering", "BSc Production Engineering", "BSc Textile Engineering",
+    "BSc Nuclear Engineering", "BSc Robotics Engineering", "BSc Construction Engineering",
+    "BSc Water Resources Engineering", "BSc Highway Engineering", "BSc Geotechnical Engineering",
+    "BSc Power Systems Engineering", "BSc Control Engineering", "BSc Instrumentation Engineering",
+    "BSc Naval Architecture", "BSc Packaging Engineering", "BSc Safety Engineering",
+    "BSc Reliability Engineering", "BSc Acoustical Engineering", "BSc Optical Engineering",
+    "BSc Materials Engineering", "BSc Thermal Engineering", "BSc Fluid Engineering",
+    "BSc Design Engineering", "BSc Engineering Physics", "BSc Energy Engineering",
+    "BSc Pipeline Engineering", "BSc Tunnel Engineering", "BSc Urban Engineering",
+    "BSc Smart Grid Engineering", "Other Engineering Course"
+  ],
+  "Technology": [
+    "BSc Information Technology", "BSc Software Technology", "BSc Network Technology",
+    "BSc Cyber Security", "BSc Cloud Computing", "BSc Artificial Intelligence",
+    "BSc Machine Learning", "BSc Data Technology", "BSc Web Technology",
+    "BSc Mobile Application Development", "BSc Computer Technology", "BSc Digital Forensics",
+    "BSc DevOps Engineering", "BSc Game Development", "BSc Virtual Reality Technology",
+    "BSc Augmented Reality Technology", "BSc Blockchain Technology", "BSc Internet of Things (IoT)",
+    "BSc Database Administration", "BSc Systems Administration", "BSc IT Project Management",
+    "BSc Enterprise Architecture", "BSc Computer Networking", "BSc Wireless Technology",
+    "BSc Embedded Systems", "BSc Human-Computer Interaction", "BSc UI/UX Design",
+    "BSc Robotics Technology", "BSc Automation Technology", "BSc Computer Forensics",
+    "BSc Health Informatics", "BSc Financial Technology (FinTech)", "BSc Agricultural Technology",
+    "BSc Educational Technology", "BSc Geo-Informatics", "BSc E-Commerce Technology",
+    "BSc Business Information Technology", "BSc Digital Media Technology", "BSc Telecommunication Technology",
+    "BSc Hardware Technology", "BSc Computer Systems", "BSc IT Security", "BSc Penetration Testing",
+    "BSc Ethical Hacking", "BSc Quantum Computing Tech", "BSc Autonomous Systems",
+    "BSc Drone Technology", "BSc Smart City Technology", "BSc Green Tech", "Other Technology Course"
+  ],
+  "IT": [
+    "BSc Information Technology", "BSc Business Information Technology", "BSc Computer Information Systems",
+    "BSc Information Systems", "BSc IT Security & Auditing", "BSc Network Administration",
+    "BSc Database Management", "BSc Web Design & Development", "BSc IT Support & Maintenance",
+    "BSc Enterprise IT", "BSc E-Government", "BSc Information Security", "BSc Digital Systems",
+    "BSc IT Governance", "BSc Computer Applications", "Other IT Course"
+  ],
+  "Business": [
+    "Bachelor of Business Administration (BBA)", "Bachelor of Commerce (BCom)", "BSc Economics",
+    "BSc Finance", "BSc Accounting", "BSc Marketing", "BSc Human Resource Management",
+    "BSc Procurement & Supply Chain", "BSc Project Management", "BSc Entrepreneurship",
+    "BSc International Business", "BSc Banking & Insurance", "BSc Hospitality Management",
+    "BSc Tourism Management", "BSc Real Estate", "BSc Property Management", "BSc Risk Management",
+    "BSc Investment Banking", "BSc Corporate Governance", "BSc Business Analytics",
+    "BSc Logistics & Transport", "BSc Strategic Management", "BSc Operations Management",
+    "BSc Public Relations", "BSc Advertising", "BSc Retail Management", "BSc Facility Management",
+    "BSc Event Management", "BSc Maritime Management", "BSc Aviation Management",
+    "BSc Agribusiness Management", "BSc Health Services Management", "BSc Sports Management",
+    "BSc Small Business Management", "BSc E-Commerce Business", "BSc Innovation Management",
+    "BSc Quality Management", "BSc Business Statistics", "BSc Actuarial Business",
+    "BSc Wealth Management", "BSc Taxation", "BSc Auditing", "BSc Financial Planning",
+    "BSc Consumer Behavior", "BSc Brand Management", "BSc Sales Management",
+    "BSc Franchise Management", "BSc NGO Management", "BSc Public Administration", "Other Business Course"
+  ],
+  "Chemistry": [
+    "BSc Industrial Chemistry", "BSc Analytical Chemistry", "BSc Organic Chemistry",
+    "BSc Inorganic Chemistry", "BSc Physical Chemistry", "BSc Medicinal Chemistry",
+    "BSc Environmental Chemistry", "BSc Forensic Chemistry", "BSc Polymer Chemistry",
+    "BSc Petroleum Chemistry", "BSc Agricultural Chemistry", "BSc Food Chemistry",
+    "BSc Computational Chemistry", "BSc Nanochemistry", "BSc Electrochemical Chemistry","BSc Nursing" ,"Other Chemistry Course"
+  ],
+  "Education": [
+    "BEd (Arts)", "BEd (Science)", "BEd Early Childhood Development", "BEd Special Needs Education",
+    "BEd Information Technology", "BEd Business Studies", "BEd Mathematics", "BEd Physics",
+    "BEd Chemistry", "BEd Biology", "BEd History", "BEd Geography", "BEd English & Literature",
+    "BEd Kiswahili", "BEd French", "BEd German", "BEd Music", "BEd Art & Design",
+    "BEd Home Science", "BEd Agriculture", "BEd Technical and Vocational Education (TVET)",
+    "BEd Guidance and Counseling", "BEd Educational Administration", "BEd Curriculum Studies",
+    "BEd Religious Studies", "BEd Business and Economics", "BEd Computer Studies",
+    "BEd Physical Education", "BEd Drama and Theatre Arts", "Other Education Course"
+  ],
+  "Arts": [
+    "BA Economics", "BA Sociology", "BA Political Science", "BA History", "BA Philosophy",
+    "BA Literature", "BA Kiswahili", "BA Linguistics", "BA Communication & Media",
+    "BA Journalism", "BA Public Relations", "BA International Relations", "BA Development Studies",
+    "BA Gender Studies", "BA Psychology", "BA Criminology", "BA Social Work",
+    "BA Fine Arts", "BA Music", "BA Drama & Theatre", "BA Cultural Studies", "BA Religious Studies",
+    "BA Anthropology", "BA Archaeology", "BA Human Geography", "BA Translation & Interpretation",
+    "BA Creative Writing", "BA Graphic Design", "BA Animation", "BA Film & Television Production", "Other Arts Course"
+  ]
+};
+
 export default function SignUp() {
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -27,6 +132,10 @@ export default function SignUp() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Dynamic Course Selection States
+  const [selectedSchool, setSelectedSchool] = useState('');
+  const [selectedCourse, setSelectedCourse] = useState('');
 
   const selectRole = (selectedRole: string) => {
     setRole(selectedRole);
@@ -44,6 +153,10 @@ export default function SignUp() {
     const userEmail = formData.get('email') as string;
     setEmail(userEmail);
 
+    const finalCourse = selectedCourse === 'Other' || selectedCourse.includes('Other') 
+      ? formData.get('customCourse') as string 
+      : selectedCourse || formData.get('course') as string;
+
     const userMetaData = {
       role: role,
       first_name: formData.get('firstName'),
@@ -52,7 +165,8 @@ export default function SignUp() {
       country: formData.get('country'),
       mobile: selectedCode + formData.get('mobile'),
       institution: formData.get('institution'),
-      course: formData.get('course') || formData.get('specialization') || '',
+      school: selectedSchool,
+      course: finalCourse,
       dob: formData.get('dob') || '',
       year_of_study: formData.get('yearOfStudy') || ''
     };
@@ -82,14 +196,12 @@ export default function SignUp() {
     newOtp[index] = element.value;
     setOtp(newOtp);
 
-    // Focus next input automatically
     if (element.nextSibling && element.value !== '') {
       (element.nextSibling as HTMLInputElement).focus();
     }
   };
 
   const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-    // Focus previous input automatically on backspace if current is empty
     if (e.key === 'Backspace' && !otp[index] && e.currentTarget.previousSibling) {
       (e.currentTarget.previousSibling as HTMLInputElement).focus();
     }
@@ -250,26 +362,56 @@ export default function SignUp() {
                     <input name="institution" required type="text" className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-green-600 outline-none text-sm" placeholder="e.g. DeKUT, UoN" />
                   </div>
                   <div>
-                    <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Course</label>
-                    <select name="course" className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-green-600 outline-none bg-white text-sm">
-                      <option value="">Select your course...</option>
-                      <optgroup label="Engineering & Technology">
-                        <option>BSc Mechanical Engineering</option>
-                        <option>BSc Civil Engineering</option>
-                        <option>BSc Computer Science</option>
-                      </optgroup>
-                      <optgroup label="Education & Arts">
-                        <option>BEd (Arts)</option>
-                        <option>BEd (Science)</option>
-                        <option>B.A Communication</option>
-                      </optgroup>
-                      <optgroup label="Other">
-                        <option>TVET / Diploma Courses</option>
-                        <option>Other Specialization</option>
-                      </optgroup>
+                    <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">School / Faculty Category</label>
+                    <select 
+                      name="school" 
+                      required
+                      value={selectedSchool}
+                      onChange={(e) => {
+                        setSelectedSchool(e.target.value);
+                        setSelectedCourse('');
+                      }}
+                      className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-green-600 outline-none bg-white text-sm"
+                    >
+                      <option value="">Select school category...</option>
+                      <option value="Science">Science</option>
+                      <option value="Engineering">Engineering</option>
+                      <option value="Technology">Technology</option>
+                      <option value="IT">IT (Information Technology)</option>
+                      <option value="Business">Business</option>
+                      <option value="Chemistry">Chemistry</option>
+                      <option value="Education">Education</option>
+                      <option value="Arts">Arts</option>
                     </select>
                   </div>
                 </div>
+
+                {/* DYNAMIC COURSE SELECTOR BASED ON SCHOOL CATEGORY */}
+                {selectedSchool && (
+                  <div>
+                    <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Select Course / Program</label>
+                    <select 
+                      name="course" 
+                      required
+                      value={selectedCourse}
+                      onChange={(e) => setSelectedCourse(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-green-600 outline-none bg-white text-sm"
+                    >
+                      <option value="">Choose your course in {selectedSchool}...</option>
+                      {schoolCoursesMap[selectedSchool]?.map((crs) => (
+                        <option key={crs} value={crs}>{crs}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* CUSTOM MANUAL COURSE INPUT IF "OTHER" CHOSEN */}
+                {(selectedCourse === 'Other' || selectedCourse.includes('Other')) && (
+                  <div>
+                    <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Specify Your Course</label>
+                    <input name="customCourse" required type="text" className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-green-600 outline-none text-sm" placeholder="Type your course name here..." />
+                  </div>
+                )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                   <div>
@@ -319,7 +461,7 @@ export default function SignUp() {
                     <input name="email" required type="email" className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 outline-none text-sm" placeholder="lecturer@university.ac.ke" />
                   </div>
                   <div>
-                    <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Department</label>
+                    <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Department / School</label>
                     <input name="institution" required type="text" className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 outline-none text-sm" placeholder="e.g. Mechanical Dept." />
                   </div>
                 </div>
