@@ -1,6 +1,8 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   DocumentArrowUpIcon, 
   ChartBarIcon, 
@@ -29,17 +31,42 @@ const kenyanUniversities = [
   "Africa Nazarene", "KeMU", "Zetech University"
 ];
 
+// Slider Image Arrays
+const heroImages = ['/image-1.jpg', '/image2.png.png'];
+const featureImages = ['/slide-1.jpg', '/slide-2.jpg', '/slide-3.jpg', '/slide-4.jpg'];
+
 export default function LandingPage() {
+  const [heroSlide, setHeroSlide] = useState(0);
+  const [featureSlide, setFeatureSlide] = useState(0);
+
+  // Auto-Sliding Timers
+  useEffect(() => {
+    const heroInterval = setInterval(() => {
+      setHeroSlide((prev) => (prev + 1) % heroImages.length);
+    }, 4000); // 4 seconds for hero slider
+
+    const featureInterval = setInterval(() => {
+      setFeatureSlide((prev) => (prev + 1) % featureImages.length);
+    }, 4000); // 4 seconds for features slider
+
+    return () => {
+      clearInterval(heroInterval);
+      clearInterval(featureInterval);
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 overflow-x-hidden selection:bg-blue-200 selection:text-blue-900">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 overflow-x-hidden w-full max-w-[100vw] selection:bg-blue-200 selection:text-blue-900">
       
-      {/* Decorative Background Elements */}
-      <div className="absolute top-0 inset-x-0 h-[50rem] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100/40 via-slate-50 to-slate-50 -z-10"></div>
-      <div className="absolute top-0 right-0 -mr-40 mt-20 w-72 sm:w-96 h-72 sm:h-96 bg-blue-400/20 rounded-full blur-3xl -z-10 animate-pulse"></div>
-      <div className="absolute top-40 left-0 -ml-40 w-60 sm:w-72 h-60 sm:h-72 bg-green-400/20 rounded-full blur-3xl -z-10"></div>
+      {/* Decorative Background Elements (Constrained to prevent mobile horizontal scroll) */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10 w-full max-w-[100vw]">
+        <div className="absolute top-0 inset-x-0 h-[50rem] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100/40 via-slate-50 to-slate-50"></div>
+        <div className="absolute top-0 right-0 -mr-20 mt-20 w-72 sm:w-96 h-72 sm:h-96 bg-blue-400/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-40 left-0 -ml-20 w-60 sm:w-72 h-60 sm:h-72 bg-green-400/20 rounded-full blur-3xl"></div>
+      </div>
 
       {/* ================= 1. NAVBAR ================= */}
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-sm">
+      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-sm w-full">
         <div className="flex justify-between items-center px-4 sm:px-6 py-3.5 max-w-7xl mx-auto">
           <div className="flex items-center gap-2.5 sm:gap-3 group cursor-pointer">
             <img 
@@ -61,7 +88,7 @@ export default function LandingPage() {
       </nav>
 
       {/* ================= 2. HERO SECTION ================= */}
-      <header className="max-w-7xl mx-auto px-4 sm:px-6 pt-12 sm:pt-20 pb-16 sm:pb-28 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <header className="max-w-7xl mx-auto px-4 sm:px-6 pt-12 sm:pt-20 pb-16 sm:pb-28 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center w-full">
         <div className="space-y-6 sm:space-y-8 relative z-10 text-center lg:text-left">
           <div className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-sm border border-blue-100 text-blue-800 px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-bold shadow-sm mx-auto lg:mx-0">
             <span className="flex h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full bg-red-500 animate-pulse ring-2 ring-red-200"></span>
@@ -90,31 +117,68 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div className="relative w-full aspect-square rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl shadow-indigo-900/10 border-8 sm:border-[12px] border-white bg-slate-100 group max-w-md mx-auto lg:max-w-none">
-           <div className="absolute inset-0 bg-gradient-to-tr from-blue-100 to-indigo-50 opacity-50 group-hover:opacity-0 transition-opacity duration-700 z-10"></div>
-           <div className="absolute inset-0 flex items-center justify-center text-slate-400 font-bold px-6 text-center text-sm sm:text-base bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
-              [Save hero-dashboard.jpg in public folder and update here]
-           </div>
+        {/* HERO SLIDER */}
+        <div className="relative w-full aspect-square rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl shadow-indigo-900/10 border-8 sm:border-[12px] border-white bg-slate-100 max-w-md mx-auto lg:max-w-none">
+          {heroImages.map((src, idx) => (
+            <Image
+              key={src}
+              src={src}
+              alt={`Hero Graphic ${idx + 1}`}
+              fill
+              priority={idx === 0}
+              className={`object-cover transition-opacity duration-1000 ease-in-out ${
+                idx === heroSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+              }`}
+            />
+          ))}
+          <div className="absolute inset-0 bg-gradient-to-tr from-blue-100/10 to-indigo-50/10 z-20 pointer-events-none"></div>
+          
+          {/* Slider Dots */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+            {heroImages.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setHeroSlide(idx)}
+                className={`w-2.5 h-2.5 rounded-full transition-all ${
+                  idx === heroSlide ? 'bg-blue-600 w-6' : 'bg-white/70 border border-slate-300'
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </header>
 
-      {/* ================= 3. SCROLLING UNIVERSITIES ================= */}
-      <section className="bg-white/50 backdrop-blur-md py-8 sm:py-12 border-y border-slate-200/60 overflow-hidden relative shadow-sm">
+      {/* ================= 3. SCROLLING UNIVERSITIES (RIGHT TO LEFT) ================= */}
+      <section className="bg-white/50 backdrop-blur-md py-8 sm:py-12 border-y border-slate-200/60 overflow-hidden relative shadow-sm w-full">
         <p className="text-center text-[11px] sm:text-xs font-bold text-slate-400 uppercase tracking-[0.15em] sm:tracking-[0.2em] mb-6 sm:mb-8 px-4">
           Students at 40+ leading Kenyan institutions trust our AI tool
         </p>
         
-        <div className="absolute left-0 right-0 h-16 sm:h-20 top-14 sm:top-16 pointer-events-none z-10 [mask-image:linear-gradient(to_right,black,transparent_10%,transparent_90%,black)] bg-slate-50/80"></div>
+        <div className="w-full overflow-hidden flex relative">
+          <style jsx>{`
+            @keyframes marquee {
+              0% { transform: translateX(0%); }
+              100% { transform: translateX(-50%); }
+            }
+            .animate-scroll-left {
+              display: flex;
+              width: max-content;
+              animation: marquee 35s linear infinite;
+            }
+            .animate-scroll-left:hover {
+              animation-play-state: paused;
+            }
+          `}</style>
 
-        <div className="w-full overflow-hidden flex">
-          <div className="animate-marquee flex gap-12 sm:gap-16 items-center px-4 sm:px-8 opacity-60 hover:opacity-100 transition-opacity duration-500">
+          <div className="animate-scroll-left flex gap-12 sm:gap-16 items-center px-4 opacity-70 hover:opacity-100 transition-opacity duration-500">
             {kenyanUniversities.map((uni, index) => (
-              <h3 key={`set1-${index}`} className="text-base sm:text-xl font-black text-slate-300 hover:text-indigo-400 transition-colors cursor-default whitespace-nowrap tracking-tight">
+              <h3 key={`set1-${index}`} className="text-base sm:text-xl font-black text-slate-400 hover:text-indigo-600 transition-colors cursor-default whitespace-nowrap tracking-tight">
                 {uni}
               </h3>
             ))}
+            {/* Duplicate set for seamless infinite loop */}
             {kenyanUniversities.map((uni, index) => (
-              <h3 key={`set2-${index}`} className="text-base sm:text-xl font-black text-slate-300 hover:text-indigo-400 transition-colors cursor-default whitespace-nowrap tracking-tight">
+              <h3 key={`set2-${index}`} className="text-base sm:text-xl font-black text-slate-400 hover:text-indigo-600 transition-colors cursor-default whitespace-nowrap tracking-tight">
                 {uni}
               </h3>
             ))}
@@ -123,7 +187,7 @@ export default function LandingPage() {
       </section>
 
       {/* ================= 4. HOW IT WORKS ================= */}
-      <section id="how-it-works" className="max-w-7xl mx-auto px-4 sm:px-6 py-20 sm:py-32 relative">
+      <section id="how-it-works" className="max-w-7xl mx-auto px-4 sm:px-6 py-20 sm:py-32 relative w-full">
         <div className="text-center mb-12 sm:mb-20 relative z-10">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 mb-4 sm:mb-6 tracking-tight">How the Platform Works</h2>
           <p className="text-slate-500 text-base sm:text-lg max-w-2xl mx-auto font-medium px-4">A seamless journey from scanning your raw classroom notes to acing your final exams.</p>
@@ -165,7 +229,7 @@ export default function LandingPage() {
       </section>
 
       {/* ================= 5. WHAT YOU CAN ACHIEVE ================= */}
-      <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 py-20 sm:py-32 grid lg:grid-cols-2 gap-12 sm:gap-20 items-center relative">
+      <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 py-20 sm:py-32 grid lg:grid-cols-2 gap-12 sm:gap-20 items-center relative w-full">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[800px] h-[300px] sm:h-[800px] bg-slate-100 rounded-full blur-3xl -z-10 opacity-50"></div>
         
         <div>
@@ -202,16 +266,37 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div className="relative w-full aspect-[4/3] bg-gradient-to-tr from-slate-100 to-blue-50/50 rounded-3xl sm:rounded-[2.5rem] border-4 sm:border-8 border-white shadow-2xl flex items-center justify-center p-6 group overflow-hidden">
-           <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px] z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-           <div className="text-slate-400 font-bold text-center text-sm sm:text-base border-2 border-dashed border-slate-300 w-full h-full flex items-center justify-center rounded-2xl relative z-20 p-4">
-              [Save feature-graphic.png in public folder and update here]
-           </div>
+        {/* FEATURES SLIDER */}
+        <div className="relative w-full aspect-[4/3] bg-gradient-to-tr from-slate-100 to-blue-50/50 rounded-3xl sm:rounded-[2.5rem] border-4 sm:border-8 border-white shadow-2xl flex items-center justify-center overflow-hidden">
+          {featureImages.map((src, idx) => (
+            <Image
+              key={src}
+              src={src}
+              alt={`Feature Slide ${idx + 1}`}
+              fill
+              className={`object-cover transition-opacity duration-1000 ease-in-out ${
+                idx === featureSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+              }`}
+            />
+          ))}
+          
+          {/* Slider Dots */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+            {featureImages.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setFeatureSlide(idx)}
+                className={`w-2.5 h-2.5 rounded-full transition-all shadow-sm ${
+                  idx === featureSlide ? 'bg-blue-600 w-6' : 'bg-white border border-slate-300'
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ================= 6. FAQ SECTION ================= */}
-      <section id="faq" className="py-20 sm:py-32 relative">
+      <section id="faq" className="py-20 sm:py-32 relative w-full">
         <div className="absolute inset-0 bg-slate-900 [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)] -z-10"></div>
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-center mb-12 sm:mb-16 text-white tracking-tight">Frequently Asked Questions</h2>
@@ -254,7 +339,7 @@ export default function LandingPage() {
       </section>
 
       {/* ================= 7. FOOTER ================= */}
-      <footer className="bg-slate-950 text-slate-300 py-16 sm:py-20 border-t border-slate-800 relative overflow-hidden">
+      <footer className="bg-slate-950 text-slate-300 py-16 sm:py-20 border-t border-slate-800 relative overflow-hidden w-full">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-blue-500 to-purple-500"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-4 gap-10 sm:gap-12 relative z-10">
           
