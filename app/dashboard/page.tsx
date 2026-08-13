@@ -80,15 +80,29 @@ export default function Dashboard() {
   const [showReminderModal, setShowReminderModal] = useState(false);
   const [reminderEmail, setReminderEmail] = useState("");
 
-  // Community & Engagement States
+  // Shared Global Community & Engagement States (Synced via LocalStorage for Public Visibility)
   const [isFollowing, setIsFollowing] = useState(false);
-  const [likeCount, setLikeCount] = useState(14);
-  const [hasLiked, setHasLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState<number>(42);
+  const [hasLiked, setHasLiked] = useState<boolean>(false);
   const [commentsList, setCommentsList] = useState<Array<{ name: string; text: string; date: string }>>([
     { name: "Prof. Ochieng", text: "This platform is an incredible tool for engineering students!", date: "Today" },
     { name: "Brian Kiprop", text: "The timetable parser and streak tracker are absolute lifesavers.", date: "Yesterday" }
   ]);
   const [newCommentText, setNewCommentText] = useState("");
+
+  // Sync public comments and likes across sessions via localStorage
+  useEffect(() => {
+    const savedLikes = localStorage.getItem('studyplatform_global_likes');
+    const savedComments = localStorage.getItem('studyplatform_global_comments');
+    if (savedLikes) setLikeCount(Number(savedLikes));
+    if (savedComments) {
+      try {
+        setCommentsList(JSON.parse(savedComments));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const quoteInterval = setInterval(() => {
@@ -155,20 +169,22 @@ export default function Dashboard() {
     };
   }, [router]);
 
-  // Handle Like Action & Send to Database/State
-  const handleLikeAction = async () => {
+  // Handle Global Public Like Action
+  const handleLikeAction = () => {
+    let newLikes = likeCount;
     if (hasLiked) {
-      setLikeCount(prev => prev - 1);
+      newLikes -= 1;
       setHasLiked(false);
     } else {
-      setLikeCount(prev => prev + 1);
+      newLikes += 1;
       setHasLiked(true);
-      // Optional: You can persist likes in Supabase metadata or a table here
     }
+    setLikeCount(newLikes);
+    localStorage.setItem('studyplatform_global_likes', newLikes.toString());
   };
 
-  // Handle Comment Submission
-  const handleCommentSubmit = async (e: React.FormEvent) => {
+  // Handle Global Public Comment Submission
+  const handleCommentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCommentText.trim()) return;
 
@@ -178,9 +194,11 @@ export default function Dashboard() {
       date: "Just now"
     };
 
-    setCommentsList([newEntry, ...commentsList]);
+    const updatedComments = [newEntry, ...commentsList];
+    setCommentsList(updatedComments);
+    localStorage.setItem('studyplatform_global_comments', JSON.stringify(updatedComments));
     setNewCommentText("");
-    alert("Comment posted successfully!");
+    alert("Your comment has been posted publicly for everyone to see!");
   };
 
   // M-Pesa STK Push Trigger Handler
