@@ -261,14 +261,14 @@ export default function Dashboard() {
   const [isAiThinking, setIsAiThinking] = useState(false);
   const [attachedFile, setAttachedFile] = useState<{ name: string; content: string } | null>(null);
   const [uploadedDocuments, setUploadedDocuments] = useState<string[]>([]);
-  const [chatHistory, setChatHistory] = useState([
+  const [chatHistory, setChatHistory] = useState<Array<{ role: string; content: string; fileName?: string }>>([
     { role: 'ai', content: "Hello! I am your Campus Study AI. You can chat with me, ask questions, or attach study materials for deep analysis." }
   ]);
 
   const [reportQuery, setReportQuery] = useState("");
   const [isReportThinking, setIsReportThinking] = useState(false);
   const [reportAttachedFile, setReportAttachedFile] = useState<{ name: string; content: string } | null>(null);
-  const [reportChatHistory, setReportChatHistory] = useState([
+  const [reportChatHistory, setReportChatHistory] = useState<Array<{ role: string; content: string; fileName?: string }>>([
     { role: 'ai', content: "Welcome to the AI Report Writer! 👋\n\nTo begin, please upload your manual, lab data, Excel spreadsheets, or reference materials using the paperclip icon below." }
   ]);
 
@@ -276,7 +276,7 @@ export default function Dashboard() {
   const [timetableAiQuery, setTimetableAiQuery] = useState("");
   const [isTimetableAiThinking, setIsTimetableAiThinking] = useState(false);
   const [timetableAiAttachedFile, setTimetableAiAttachedFile] = useState<{ name: string; content: string } | null>(null);
-  const [timetableAiChat, setTimetableAiChat] = useState([
+  const [timetableAiChat, setTimetableAiChat] = useState<Array<{ role: string; content: string; fileName?: string }>>([
     { role: 'ai', content: "Hello! Upload your timetable document or photo (or type class details like '4.1 BEd Mechanical'). I'll analyze it!" }
   ]);
 
