@@ -46,12 +46,35 @@ const getCurrentWeek = () => {
   return Math.ceil((((now.getTime() - start.getTime()) / 86400000) + start.getDay() + 1) / 7);
 };
 
+// AI Course Recognition Welcome Note Generator
+const getCourseWelcomeNote = (courseName: string, userName: string) => {
+  if (!courseName) return `Welcome back, ${userName}! Let's make today count and build your academic success! 🚀`;
+  
+  const lower = courseName.toLowerCase();
+  if (lower.includes('nurse') || lower.includes('nursing')) {
+    return `✨ Hello Dr. / Nurse ${userName}! Thank you for joining a platform designed to make your healing journey true, caring, and magical! 🩺💖`;
+  } else if (lower.includes('mech') || lower.includes('civil') || lower.includes('eng')) {
+    return `⚡ Welcome back, Engineer ${userName}! Your capstones, blueprints, and calculations are shaping tomorrow's world. Keep building! 🏗️⚙️`;
+  } else if (lower.includes('computer') || lower.includes('tech') || lower.includes('it') || lower.includes('software')) {
+    return `💻 Hey Code Wizard ${userName}! Ready to deploy brilliance and squash bugs today? Your tech journey is magic! 🚀✨`;
+  } else if (lower.includes('med') || lower.includes('surgery') || lower.includes('clinical')) {
+    return `🌟 Greetings, Future Lifesaver ${userName}! May your clinicals and medical studies bring healing and true magic to the world! 🏥✨`;
+  } else if (lower.includes('law') || lower.includes('legal')) {
+    return `⚖️ Welcome back, Counselor ${userName}! May your arguments be sharp and your studies pave the way for true justice! 🏛️✨`;
+  } else if (lower.includes('bus') || lower.includes('econ') || lower.includes('finance') || lower.includes('com')) {
+    return `📈 Hello Tycoon ${userName}! Ready to scale markets, analyze alphas, and build business empires today? 💼✨`;
+  } else {
+    return `✨ Welcome back, ${userName}! Proud to have a dedicated ${courseName} scholar on board. Let's make your academic journey true and magic! 🎓🚀`;
+  }
+};
+
 export default function Dashboard() {
   const router = useRouter();
   
   const [isLoading, setIsLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState("Student");
+  const [userCourse, setUserCourse] = useState("General Studies");
   const [userInitials, setUserInitials] = useState("ST");
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const [userSubscription, setUserSubscription] = useState("free");
@@ -112,7 +135,7 @@ export default function Dashboard() {
     return () => clearInterval(quoteInterval);
   }, []);
 
-  // ================= 🛡️ BULLETPROOF AUTH CHECK =================
+  // ================= 🛡️ BULLETPROOF AUTH CHECK (SUPABASE) =================
   useEffect(() => {
     let isMounted = true;
 
@@ -146,6 +169,7 @@ export default function Dashboard() {
         setUserName(cleanName);
         setEditName(cleanName);
         setUserInitials(cleanName.substring(0, 2).toUpperCase());
+        setUserCourse(meta.course || meta.school || "General Studies");
         
         if (meta.avatar_url) setUserAvatar(meta.avatar_url);
         if (meta.myUnits && Array.isArray(meta.myUnits)) setMyUnits(meta.myUnits);
@@ -671,18 +695,29 @@ export default function Dashboard() {
       case 'Overview':
         return (
           <div className="space-y-6 sm:space-y-8 animate-fadeIn w-full max-w-full overflow-x-hidden">
+            {/* SPARKLY AI WELCOME BANNER WITH COURSE RECOGNITION */}
             <div className="relative overflow-hidden bg-gradient-to-r from-slate-900 via-indigo-950 to-emerald-950 p-6 sm:p-8 rounded-3xl shadow-2xl border border-white/10 text-white">
-              <div className="absolute right-0 top-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="absolute right-0 top-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
               <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
                 <div>
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-extrabold mb-3 border border-emerald-500/30">
-                    <SparklesIcon className="w-3.5 h-3.5 animate-spin" /> AI Study Assistant Active
+                    <SparklesIcon className="w-3.5 h-3.5 animate-spin text-yellow-300" /> AI Study Assistant Active
                   </div>
-                  <h1 className="text-2xl sm:text-4xl font-black tracking-tight mb-2">Welcome back, {userName}! 👋</h1>
+                  
+                  {/* Glittering Name & Course Recognition */}
+                  <h1 className="text-2xl sm:text-4xl font-black tracking-tight mb-2 bg-gradient-to-r from-white via-emerald-200 to-teal-400 bg-clip-text text-transparent animate-pulse">
+                    Welcome back, {userName}! ✨🎓
+                  </h1>
+                  
+                  <p className="text-emerald-300 text-sm sm:text-base font-bold transition-all duration-700 mb-3 flex items-center gap-2">
+                    <span>📚 Program:</span> <span className="text-white underline decoration-emerald-400">{userCourse}</span>
+                  </p>
+
                   <p className="text-slate-300 text-sm sm:text-base font-medium italic transition-all duration-700">
-                    "{currentQuote}"
+                    "{getCourseWelcomeNote(userCourse, userName)}"
                   </p>
                 </div>
+
                 <button 
                   onClick={handleGenerateWeeklySummary} 
                   disabled={isGeneratingSummary}
